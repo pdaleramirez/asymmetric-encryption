@@ -135,13 +135,13 @@ class AsymmetricEncryptionService
      * @param string $privateKey Private key to decrypt data.
      * @return string
      */
-    public function decrypt(string $data, string $privateKey): string
+    public function decrypt(string $data, string $privateKey, string $passphrase=null): string
     {
         $data = $this->deConcatenate($data);
 
         $data = $this->base64Decode($data);
 
-        $symmetricKey = $this->asymmetricDecrypt($data['key'], $privateKey);
+        $symmetricKey = $this->asymmetricDecrypt($data['key'], $privateKey, $passphrase);
 
         $decrypted = $this->symmetricDecrypt($data, $symmetricKey);
 
@@ -155,11 +155,11 @@ class AsymmetricEncryptionService
      * @param string $privateKey
      * @return string
      */
-    public function asymmetricDecrypt(string $data, string $privateKey) : string
+    public function asymmetricDecrypt(string $data, string $privateKey, string $passphrase) : string
     {
         $decrypted = '';
 
-        $key = openssl_get_privatekey($privateKey);
+        $key = openssl_get_privatekey($privateKey, $passphrase);
 
         openssl_private_decrypt($data, $decrypted, $key, OPENSSL_PKCS1_OAEP_PADDING);
 
